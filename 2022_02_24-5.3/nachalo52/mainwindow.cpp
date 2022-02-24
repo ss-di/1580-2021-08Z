@@ -8,17 +8,33 @@
 using namespace std;
 vector<string> users;
 
+QString s2qs(string s){
+    return QString::fromUtf8(s.c_str());
+}
+
+string qs2s(QString qs){
+    return qs.toStdString();
+}
+
+void UpdateUsers(QListWidget* lst){
+    lst -> clear();
+    for(int i = 0; i < int(users.size()); i += 1)
+        lst -> addItem(s2qs(users[i]));
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
+
     string s;
     ifstream input_file("data.csv");
     while (getline(input_file, s))
         users.push_back(s);
     input_file.close();
 
-    ui->setupUi(this);
+    UpdateUsers(ui -> lstUsers);
 }
 
 MainWindow::~MainWindow()
@@ -64,5 +80,43 @@ void MainWindow::on_btnCheck_clicked()
         QString qname = QString::fromUtf8(name.c_str());
         QMessageBox::information(this, "Ok", "Hello, " + qname + "!" );
     }
+}
+
+
+void MainWindow::on_btnDelete_clicked()
+{
+    int pos = ui -> lstUsers -> currentRow();
+//    ui -> lstUsers ->takeItem(pos);
+
+    for(int i = pos; i < int(users.size())-1; i += 1)
+        users[i] = users[i + 1];
+    users.resize(users.size() - 1);
+
+    UpdateUsers(ui -> lstUsers);
+}
+
+
+void MainWindow::on_btnDeleteErase_clicked()
+{
+    int pos = ui -> lstUsers -> currentRow();
+
+    users.erase(users.begin()+pos);
+
+    UpdateUsers(ui -> lstUsers);
+
+}
+
+
+void MainWindow::on_lstUsers_itemSelectionChanged()
+{
+    ui -> edtUser -> setText(ui -> lstUsers -> currentItem() -> text());
+}
+
+
+void MainWindow::on_btnUpdate_clicked()
+{
+    int pos = ui -> lstUsers -> currentRow();
+    ui -> lstUsers->currentItem() -> setText(ui -> edtUser -> text());
+    users[pos] = qs2s(ui -> edtUser -> text());
 }
 

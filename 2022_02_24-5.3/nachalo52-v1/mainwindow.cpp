@@ -8,17 +8,28 @@
 using namespace std;
 vector<string> users;
 
+string qs2s(QString qs){
+    return qs.toStdString();
+}
+
+QString s2qs(string s){
+    return QString::fromUtf8(s.c_str());
+}
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
+
     string s;
     ifstream input_file("data.csv");
     while (getline(input_file, s))
         users.push_back(s);
     input_file.close();
 
-    ui->setupUi(this);
+    for(int i = 0; i < int(users.size()); i += 1)
+        ui->lstUser->addItem(s2qs(users[i]));
+
 }
 
 MainWindow::~MainWindow()
@@ -55,14 +66,48 @@ string GetDataByLogin(string log){
 void MainWindow::on_btnCheck_clicked()
 {
     QString qlog = ui -> edtLogin -> text();
-    string log = qlog.toStdString();
+    string log = qs2s(qlog);
     string res = GetDataByLogin(log);
     if (res == "")
         QMessageBox::critical(this, "Ошибка", "Пользователь не найден");
     else {
         string name = GetNameFromData(res);
-        QString qname = QString::fromUtf8(name.c_str());
+        QString qname = s2qs(name);
         QMessageBox::information(this, "Ok", "Hello, " + qname + "!" );
     }
+}
+
+
+void MainWindow::on_btnDel_clicked()
+{
+    int pos = ui->lstUser->currentRow();
+    ui->lstUser->takeItem(pos);
+
+    for(int i = pos; i < int(users.size())-1; i += 1)
+        users[i] = users[i + 1];
+    users.resize(users.size()-1);
+
+}
+
+
+void MainWindow::on_btnErase_clicked()
+{
+    int pos = ui->lstUser->currentRow();
+    ui->lstUser->takeItem(pos);
+    users.erase(users.begin()+pos);
+}
+
+
+void MainWindow::on_lstUser_itemSelectionChanged()
+{
+    ui ->edtUser->setText(ui->lstUser->currentItem()->text());
+}
+
+
+void MainWindow::on_btnUpdate_clicked()
+{
+    ui->lstUser->currentItem()->setText(ui ->edtUser->text());
+    int pos = ui->lstUser->currentRow();
+    users[pos] = qs2s(ui ->edtUser->text());
 }
 
