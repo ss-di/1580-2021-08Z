@@ -5,11 +5,19 @@ using namespace std;
 struct Node {
     int inf = 0;
     Node *prev = nullptr, *next = nullptr;
+    Node(int el);
 };
+
+Node::Node(int el) {
+    inf = el;
+}
 
 struct List {
     Node *head = nullptr, *tail = nullptr;
     int size = 0;
+
+    List();
+    ~List();
 
     void AddFirst(int z);
     void AddLast(int z);
@@ -18,11 +26,21 @@ struct List {
     void PrintFirstLast();
     void PrintLastFirst();
     void Clear();
+    void Sort();
+    bool Sort1();
 };
 
+List::List() {
+    cout << "Hello" << '\n';
+}
+
+List::~List() {
+    Clear();
+    cout << "Bye" << '\n';
+}
+
 void List::AddFirst(int z){
-    Node *p = new Node;
-    p -> inf = z;
+    Node *p = new Node(z);
     if  (!head) //(head == nullptr)
         head = tail = p;
     else {
@@ -34,8 +52,7 @@ void List::AddFirst(int z){
 }
 
 void List::AddLast(int z){
-    Node *p = new Node;
-    p -> inf = z;
+    Node *p = new Node(z);
     if  (!head) //(head == nullptr)
         head = tail = p;
     else {
@@ -98,18 +115,41 @@ void List::Clear(){
     while (DelFirst());
 }
 
+bool List::Sort1(){
+    bool res = false;
+    Node *p = head;
+    while (p->next) {
+        if (p->inf > p->next->inf) {
+            swap(p->inf, p->next->inf);
+            res = true;
+        }
+        p = p->next;
+    }
+    return res;
+}
+
+
+void List::Sort() {
+    if (size < 2)
+        return;
+    bool flag = true;
+    while(flag)
+        flag = Sort1();
+}
+
 int main()
 {
     List l;
     l.AddFirst(1);
-    l.AddFirst(2);
+    l.AddFirst(22);
     l.AddFirst(3);
     l.AddLast(7);
-    l.AddLast(8);
+    l.AddLast(5);
     l.AddLast(9);
+    l.Sort();
     l.PrintFirstLast();
     l.PrintLastFirst();
-    l.Clear();
+
     cout << "Hello world!" << endl;
     return 0;
 }
