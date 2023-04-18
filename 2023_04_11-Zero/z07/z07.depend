@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1681802929 source:c:\users\lobachevaa\documents\github\1580-2021-08z\2023_04_11-zero\z07\main.cpp
+	<iostream>
+	<vector>
+	<string>
+	<sstream>
+	<cmath>
+
