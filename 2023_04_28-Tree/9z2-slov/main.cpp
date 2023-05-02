@@ -1,10 +1,12 @@
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
 template <typename T>
 struct Node {
     T inf = T();
+    int cnt = 1;
     Node *left = nullptr, *right = nullptr;
     Node(T el);
 };
@@ -23,6 +25,9 @@ struct Tree {
     void Add(T el, Node<T> *&root);
     void LKP();
     void LKP(Node<T> *root);
+    void PKL();
+    void PKL(Node<T> *root);
+    void LKP_c(Node<T> *root, Tree<pair<int, string>> & t2);
     void Clear();
     void Clear(Node<T> *root);
     bool Find(T el);
@@ -39,13 +44,13 @@ struct Tree {
 
 template <typename T>
 Tree<T>::Tree() {
-    cout << "Hello" << '\n';
+//    cout << "Hello" << '\n';
 }
 
 template <typename T>
 Tree<T>::~Tree() {
     Clear();
-    cout << "Bye" << '\n';
+//    cout << "Bye" << '\n';
 }
 
 template <typename T>
@@ -69,19 +74,43 @@ void Tree<T>::Addint(T el){
     }
 }
 
+
+
+template <typename T>
+void Tree<T>::LKP_c(Node<T> *root, Tree<pair<int, string>> & t2){
+    if (!root)
+        return;
+    LKP_c(root -> left, t2);
+    t2.Add(make_pair(root->cnt, root->inf));
+    LKP_c(root -> right, t2);
+}
+
 template <typename T>
 void Tree<T>::LKP(Node<T> *root){
     if (!root)
         return;
     LKP(root -> left);
-    cout << root->inf <<" ";
+//    cout << root->inf << " " << root->cnt << "\n";
+    cout << root->inf << "\n";
     LKP(root -> right);
 }
-
 template <typename T>
 void Tree<T>::LKP(){
     LKP(root);
-    cout << '\n';
+}
+template <typename T>
+void Tree<T>::PKL(Node<T> *root){
+    if (!root)
+        return;
+    PKL(root -> right );
+//    cout << root->inf << " " << root->cnt << "\n";
+    cout << root->inf << "\n";
+    PKL(root -> left);
+}
+
+template <typename T>
+void Tree<T>::PKL(){
+    PKL(root);
 }
 
 template <typename T>
@@ -178,32 +207,32 @@ Node<T> * Tree<T>::Get(T el, Node<T> *root){
     return Get(el, root->right);
 }
 
+ostream & operator << (ostream & out, pair<int, string> const & p)
+{
+    out << p.second << " " <<  p.first;
+    return out;
+}
+
 
 int main()
 {
-    Tree<int> t;
-    t.Add(5);
-    t.Add(10);
-    t.Add(3);
-    t.Add(2);
-    t.Add(7);
-    t.Add(11);
-    t.LKP();
-    t.Get(11)->inf += 1;
-    t.Delete(5);
-    t.LKP();
+    ifstream f("input.txt");
+    string s;
+    Tree <string> t_alf;
+    while (f >> s) {
+        //cout << s<<'\n';
+        Node<string> * tmp = t_alf.Get(s);
+        if (tmp)
+            tmp->cnt += 1;
+        else
+            t_alf.Add(s);
+    }
+    //t_alf.LKP();
+    f.close();
 
-    cout << t.Find(21);
-
-    Tree<double> t2;
-    t2.Add(2.3);
-    t2.Add(4.5);
-    t2.LKP();
-
-    Tree<string> t3;
-    t3.Add("123");
-    t3.LKP();
-
+    Tree <pair<int, string>> t_freq;
+    t_alf.LKP_c(t_alf.root, t_freq);
+    t_freq.PKL();
 //    cout << "Hello world!" << endl;
     return 0;
 }
