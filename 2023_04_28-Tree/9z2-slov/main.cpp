@@ -26,7 +26,7 @@ struct Tree {
     void LKP();
     void LKP(Node<T> *root);
     void PKL();
-    void PKL(Node<T> *root);
+    void PKL(Node<T> *root, ofstream &f);
     void LKP_c(Node<T> *root, Tree<pair<int, string>> & t2);
     void Clear();
     void Clear(Node<T> *root);
@@ -99,18 +99,20 @@ void Tree<T>::LKP(){
     LKP(root);
 }
 template <typename T>
-void Tree<T>::PKL(Node<T> *root){
+void Tree<T>::PKL(Node<T> *root, ofstream &f){
     if (!root)
         return;
-    PKL(root -> right );
+    PKL(root -> right, f);
 //    cout << root->inf << " " << root->cnt << "\n";
-    cout << root->inf << "\n";
-    PKL(root -> left);
+    f << root->inf << "\n";
+    PKL(root -> left, f);
 }
 
 template <typename T>
 void Tree<T>::PKL(){
-    PKL(root);
+    ofstream f2("output.txt");
+    PKL(root, f2);
+    f2.close();
 }
 
 template <typename T>

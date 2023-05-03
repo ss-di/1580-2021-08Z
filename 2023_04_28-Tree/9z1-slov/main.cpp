@@ -49,6 +49,7 @@ template <typename T>
 vector<Node<T>> Tree<T>::ToVector(){
     vector <Node<T>> v;
     ToVector(root, v);
+    return v;
 }
 template <typename T>
 void Tree<T>::ToVector(Node<T> *&r, vector<Node<T>> & v){
@@ -164,6 +165,19 @@ Tree<T>::~Tree(){
     Clear();
 }
 
+ostream & operator << (ostream & out, pair<int, string> const & p)
+{
+    out << p.second << " " <<  p.first;
+    return out;
+}
+
+bool operator < (pair<int, string> const & a, pair<int, string> const & b)
+{
+    return a.first > b.first || (a.first == b.first && a.second < b.second);
+}
+
+
+
 int main()
 {
     ifstream f("input.txt");
@@ -174,14 +188,26 @@ int main()
         t.Add(s);
     f.close();
 
-    t.LKR();
+    //t.LKR();
     vector<Node<string>> v;
     v = t.ToVector();
 
-    for (auto x : v)
-        cout << x.inf << x.cnt;
-
     Tree <pair<int, string>> t2;
 
+    for (auto x : v)
+        //cout << x.inf<<' ' << x.cnt<<'\n';
+        t2.Add(make_pair(x.cnt, x.inf));
+
+    //t2.LKR();
+
+    vector<Node<pair<int, string>>> v2;
+    v2 = t2.ToVector();
+
+    ofstream f2("output.txt");
+
+    for (auto x : v2)
+        f2 << x.inf.second << ' ' << x.inf.first << '\n';
+
+    f2.close();
     return 0;
 }
